@@ -1,0 +1,12 @@
+! ### This is a Network Device Template
+! ### Nicholas G. Schmidt
+! ### 28 May 2021
+! ### Doesn't actually do anything, initial test
+! Template Name: Basic Test Example
+! Template Kind: basic-text
+! And now, for the actual configuration
+
+hostname BasicTestExample
+interface intf1
+ description generic_comment
+ ip address 1.1.1.1/32
