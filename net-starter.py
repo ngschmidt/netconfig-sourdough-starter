@@ -3,7 +3,6 @@
 # Nicholas Schmidt
 # 28 May 2021
 
-
 # Command line parsing imports
 import argparse
 
@@ -30,7 +29,7 @@ parser.add_argument('-o', help='Output file')
 parser.add_argument('input', help='Data input - YAML file')
 args = parser.parse_args()
 
-# Load IPAM Templates folder as Jinja2 root
+# Load Templates folder as Jinja2 root
 local_env = Environment(loader=FileSystemLoader('templates'))
 device_template = local_env.get_template('basic-text.j2')
 interface_template = local_env.get_template('interface-basic-text.j2')
