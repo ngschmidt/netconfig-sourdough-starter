@@ -32,13 +32,13 @@ Located in `kinds`. The eventual goal here is to use YAML Front Matter (YFM) to 
 Generate your `kind` device definition starter:
 
 ```bash
-python3 net-starter.py -g {{ kind }}
+python3 net-starter.py -gen-kind {{ kind }}
 ```
 
 Add your variables, then run again:
 
 ```bash
-python3 net-starter.py {{ variablefile }}
+python3 net-starter.py -i {{ variablefile }}
 ```
 
 Ideally, store the variable file in a source of truth like [Netbox](https://netbox.readthedocs.io/en/stable/) for safe keeping!

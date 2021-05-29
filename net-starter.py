@@ -25,8 +25,11 @@ from jinja2 import Environment, FileSystemLoader
 # Arguments Parsing
 parser = argparse.ArgumentParser(description='Process YAML Inputs')
 parser.add_argument('-v', '--verbosity', action='count', default=0, help='Output Verbosity')
+parser.add_argument('--gen-kind', help='Generate a device file to customize. Pass this a kind to generate against')
+parser.add_argument('--gen-test', help='Generate a truth file based on hashed data to be consumed by the testing framework')
+parser.add_argument('--test', help='Perform a self-test')
 parser.add_argument('-o', help='Output file')
-parser.add_argument('input', help='Data input - YAML file')
+parser.add_argument('-i', '--input', help='Input. Pass this a YAML file')
 args = parser.parse_args()
 
 # Load Templates folder as Jinja2 root
