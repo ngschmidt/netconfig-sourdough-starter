@@ -1,0 +1,11 @@
+---
+name:
+kind:
+commentchar:
+hostname:
+interfaces:
+  - name:
+    kind:
+    comment:
+    ipv4:
+      addr:
