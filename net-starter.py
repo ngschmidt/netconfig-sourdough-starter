@@ -11,6 +11,7 @@ import sys
 
 # YAML. Used for human inputs
 
+import yaml
 from ruamel.yaml import YAML
 from ruamel.yaml import scanner
 
@@ -29,12 +30,31 @@ from jinja2 import Environment, FileSystemLoader
 # Arguments Parsing
 parser = argparse.ArgumentParser(description='Process YAML Inputs')
 parser.add_argument('-v', '--verbosity', action='count', default=0, help='Output Verbosity')
-parser.add_argument('--gen-kind', help='Generate a device file to customize. Pass this a kind to generate against')
-parser.add_argument('--gen-test', help='Generate a truth file based on hashed data to be consumed by the testing framework')
+parser.add_argument('--generate', help='Generate a device file to customize. Pass this a kind to generate against')
 parser.add_argument('--test', help='Perform a self-test')
 parser.add_argument('-o', help='Output file')
 parser.add_argument('-i', '--input', help='Input. Pass this a YAML file')
 args = parser.parse_args()
+
+# Generate a kind file for a user to build on
+if(args.generate):
+    try:
+        with open("kinds/" + args.generate + ".json", 'r') as json_file:
+            example_dict = json.loads(json_file.read())
+    except Exception as e:
+        sys.exit("E1200: JSON Load failure: " + str(e))
+    else:
+        print(yaml.dump(example_dict))
+        # Optionally Write all that to a file
+        if(args.o):
+            try:
+                filehandle = open(args.o, "w")
+                filehandle.write(yaml.dump(example_dict))
+                filehandle.close()
+            except:
+                sys.exit("Error writing to file!")
+        sys.exit()
+
 
 # Load Templates folder as Jinja2 root
 local_env = Environment(loader=FileSystemLoader('templates'))
