@@ -9,16 +9,20 @@ import argparse
 # Import System calls
 import sys
 
-# YAML
+# YAML. Used for human inputs
 
 from ruamel.yaml import YAML
 from ruamel.yaml import scanner
 
-# JSON. It's weird and *I DO NOT CARE!*
+# JSON. Used for non-human inputs
 
 import json
 
-# Templates
+# Cerberus. Used to validate human and non-human inputs
+
+from cerberus import Validator
+
+# Templates. Basically the core to what we're doing here.
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -34,10 +38,8 @@ args = parser.parse_args()
 
 # Load Templates folder as Jinja2 root
 local_env = Environment(loader=FileSystemLoader('templates'))
-device_template = local_env.get_template('basic-text.j2')
-interface_template = local_env.get_template('interface-basic-text.j2')
 
-# Load Definition file
+# Load Definition Classes
 yaml_input = YAML(typ='safe')
 yaml_dict = {}
 
@@ -63,7 +65,18 @@ else:
     if args.verbosity > 0:
         print(json.dumps(yaml_dict, indent=4))
 finally:
-    print("Valid YAML Found!")
+    print("Valid YAML Found! Executing Template Actions...")
+
+# Set Templates and Validators now that we know what to validate against
+
+try:
+    device_kind = yaml_dict['kind']
+except KeyError as e:
+    sys.exit('E1101: Device kind not found! Could not find key ' + str(e))
+finally:
+    device_template = local_env.get_template(yaml_dict['kind'] + '.j2')
+
+# Do stuff with the data!
 
 # Generate Overall Configuration file
 output_output = ""
@@ -72,12 +85,19 @@ output_output += "\n"
 
 # Do interfaces
 for i in yaml_dict['interfaces']:
-    output_output += interface_template.render(i)
+    try:
+        interface_kind = i['kind']
+    except KeyError as e:
+        sys.exit('E1102: Interface kind not found! Could not find key ' + str(e))
+    finally:
+        interface_template = local_env.get_template(i['kind'] + '.j2')
+        output_output += interface_template.render(i)
+
 print(output_output)
 
 # Write all that to a file
 if(args.o):
-    try:  
+    try:
         filehandle = open(args.o, "w")
         filehandle.write(output_output)
         filehandle.close()
