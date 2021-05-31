@@ -48,7 +48,7 @@ if(args.generate):
         # Optionally Write all that to a file
         if(args.output):
             try:
-                filehandle = open(args.o, "w")
+                filehandle = open(args.output, "w")
                 filehandle.write(yaml.dump(example_dict))
                 filehandle.close()
             except Exception as e:
@@ -138,7 +138,7 @@ elif(args.input):
     # Write all that to a file
     if(args.output):
         try:
-            filehandle = open(args.o, "w")
+            filehandle = open(args.output, "w")
             filehandle.write(output_output)
             filehandle.close()
         except Exception as e:
