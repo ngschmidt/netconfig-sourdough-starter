@@ -86,7 +86,7 @@ elif(args.input):
             print(json.dumps(yaml_dict, indent=4))
             print("Valid YAML Found! Executing Template Actions...")
 
-    # Validate YAML Structure
+    # Validate YAML Structure (body)
     try:
         with open("kinds/" + yaml_dict['kind'] + ".json", 'r') as json_file:
             validation_dict = json.loads(json_file.read())
@@ -95,7 +95,8 @@ elif(args.input):
     else:
         schema_validator = Validator(validation_dict, require_all=True)
         if not (schema_validator.validate(yaml_dict)):
-            print("E1400: Invalid YAML found!" + str(schema_validator.document_error_tree))
+            # Provide intuitive errors on why it failed validation, pretty printed
+            sys.exit("E1400: Validation Errors found:\n" + json.dumps(schema_validator.errors, indent=4))
 
     # Set Templates and Validators now that we know what to validate against
 
@@ -115,6 +116,17 @@ elif(args.input):
 
     # Do interfaces
     for i in yaml_dict['interfaces']:
+        # Validate YAML Structure (interfaces). It doesn't make sense to run two separate for loops here.
+        try:
+            with open("kinds/" + i['kind'] + ".json", 'r') as json_file:
+                validation_dict = json.loads(json_file.read())
+        except Exception as e:
+            sys.exit("E1300: Kind processing issue: " + str(e))
+        else:
+            schema_validator = Validator(validation_dict, require_all=True)
+            if not (schema_validator.validate(i)):
+                # Provide intuitive errors on why it failed validation, pretty printed
+                sys.exit("E1400: Validation Errors found in interfaces section:\n" + json.dumps(schema_validator.errors, indent=4))
         try:
             interface_kind = i['kind']
         except KeyError as e:
