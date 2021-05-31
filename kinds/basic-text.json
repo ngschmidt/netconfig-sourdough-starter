@@ -1,28 +1,17 @@
 {
    "name": {
-     "required": true,
      "type": "string"
    },
    "kind": {
-     "required": true,
      "type": "string"
    },
    "commentchar": {
-     "required": true,
      "type": "string"
    },
    "hostname": {
-     "required": true,
      "type": "string"
    },
-   "interfaces": [
-      {
-         "name": null,
-         "kind": null,
-         "comment": null,
-         "ipv4": {
-            "addr": null
-         }
-      }
-   ]
+   "interfaces": {
+      "type": "list"
+    }
 }
