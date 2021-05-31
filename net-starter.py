@@ -46,7 +46,7 @@ if(args.generate):
     else:
         print(yaml.dump(example_dict))
         # Optionally Write all that to a file
-        if(args.o):
+        if(args.output):
             try:
                 filehandle = open(args.o, "w")
                 filehandle.write(yaml.dump(example_dict))
