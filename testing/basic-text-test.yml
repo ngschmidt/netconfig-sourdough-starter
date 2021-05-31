@@ -1,7 +1,7 @@
 ---
 name: "Basic Test Example"
 kind: "basic-text"
-commentchar: "!"
+commentchaar: "!"
 hostname: "BasicTestExample"
 interfaces:
   - name: "intf1"

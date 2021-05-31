@@ -93,9 +93,9 @@ elif(args.input):
     except Exception as e:
         sys.exit("E1300: Kind processing issue: " + str(e))
     else:
-        print(json.dumps(validation_dict))
         schema_validator = Validator(validation_dict, require_all=True)
-        print(schema_validator.validate(yaml_dict))
+        if not (schema_validator.validate(yaml_dict)):
+            print("E1400: Invalid YAML found!" + str(schema_validator.document_error_tree))
 
     # Set Templates and Validators now that we know what to validate against
 
