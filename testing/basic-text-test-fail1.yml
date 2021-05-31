@@ -1,0 +1,11 @@
+---
+name: "Basic Test Example"
+kind: "basic-text"
+commentchaar: "!"
+hostname: "BasicTestExample"
+interfaces:
+  - name: "intf1"
+    kind: "interface-basic-text"
+    comment: "generic_comment"
+    ipv4:
+      addr: "1.1.1.1/32"
