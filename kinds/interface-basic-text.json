@@ -8,9 +8,6 @@
     "comment": {
       "type": "string"
     },
-    "hostname": {
-      "type": "string"
-    },
     "ipv4": {
        "type": "dict",
        "required": false
