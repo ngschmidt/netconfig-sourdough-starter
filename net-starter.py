@@ -47,43 +47,34 @@ if(args.generate):
             example_dict = json.loads(json_file.read())
     except Exception as e:
         sys.exit("E1200: JSON Load failure: " + str(e))
-    else:
-        # First, let's take the imported dictionary and populate it full of stuff
-        populated_dict = {}
-        populated_dict['kind'] = args.generate
-        for i in example_dict:
-            if i == 'kind':
-                pass
-            elif example_dict[i]['type'] == 'string':
-                populated_dict[i] = ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
-        # Then, we validate it by parsing the YAML and validating the dict
-        # Validate YAML Structure (body)
+    # First, let's take the imported dictionary and populate it full of stuff
+    populated_dict = {}
+    populated_dict['kind'] = args.generate
+    for i in example_dict:
+        if i == 'kind':
+            pass
+        elif example_dict[i]['type'] == 'string':
+            populated_dict[i] = ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
+    # Then, we validate it by parsing the YAML and validating the dict
+    # Validate YAML Structure (body)
+    schema_validator = Validator(example_dict, require_all=True)
+    if not (schema_validator.validate(populated_dict)):
+        # Provide intuitive errors on why it failed validation, pretty printed
+        sys.exit("E1400: Validation Errors found:\n" + json.dumps(schema_validator.errors, indent=4))
+
+    # Then, let's turn the output into a string
+    output_output = yaml.dump(populated_dict)
+    print(output_output)
+
+    # Optionally Write all that to a file
+    if(args.output):
         try:
-            with open("kinds/" + populated_dict['kind'] + ".json", 'r') as json_file:
-                validation_dict = json.loads(json_file.read())
+            filehandle = open(args.output, "w")
+            filehandle.write(output_output)
+            filehandle.close()
         except Exception as e:
-            sys.exit("E1300: Kind processing issue: " + str(e))
-        else:
-            schema_validator = Validator(validation_dict, require_all=True)
-            if not (schema_validator.validate(populated_dict)):
-                # Provide intuitive errors on why it failed validation, pretty printed
-                sys.exit("E1400: Validation Errors found:\n" + json.dumps(schema_validator.errors, indent=4))
-
-        # Then, let's turn the output into a string
-        output_output = yaml.dump(populated_dict)
-        json.dumps(populated_dict)
-        print(output_output)
-
-        # Optionally Write all that to a file
-        if(args.output):
-            try:
-                filehandle = open(args.output, "w")
-                filehandle.write(output_output)
-                filehandle.close()
-            except Exception as e:
-                sys.exit("Error writing to file! " + str(e))
-    finally:
-        sys.exit()
+            sys.exit("Error writing to file! " + str(e))
+    sys.exit()
 elif(args.input):
     # Load Templates folder as Jinja2 root
     local_env = Environment(loader=FileSystemLoader('templates'))
