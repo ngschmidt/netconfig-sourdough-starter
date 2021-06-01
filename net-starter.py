@@ -53,8 +53,10 @@ if(args.generate):
     for i in example_dict:
         if i == 'kind':
             pass
-        elif example_dict[i]['type'] == 'string':
+        elif example_dict[i]['type'] != 'list':
             populated_dict[i] = ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
+        elif example_dict[i]['type'] == 'list':
+            populated_dict[i] = [{"name": "intf1"}]
     # Then, we validate it by parsing the YAML and validating the dict
     # Validate YAML Structure (body)
     schema_validator = Validator(example_dict, require_all=True)
