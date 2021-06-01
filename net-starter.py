@@ -23,6 +23,11 @@ import json
 
 from cerberus import Validator
 
+# Randomizer for unit tests
+
+import string
+import random
+
 # Templates. Basically the core to what we're doing here.
 
 from jinja2 import Environment, FileSystemLoader
@@ -31,7 +36,6 @@ from jinja2 import Environment, FileSystemLoader
 parser = argparse.ArgumentParser(description='Process YAML Inputs')
 parser.add_argument('-v', '--verbosity', action='count', default=0, help='Output Verbosity')
 parser.add_argument('-g', '--generate', help='Generate a device file to customize. Pass this a kind to generate against')
-parser.add_argument('-t', '--test', help='Perform a self-test')
 parser.add_argument('-o', '--output', help='Output file')
 parser.add_argument('-i', '--input', help='Input. Pass this a YAML file')
 args = parser.parse_args()
@@ -44,12 +48,37 @@ if(args.generate):
     except Exception as e:
         sys.exit("E1200: JSON Load failure: " + str(e))
     else:
-        print(yaml.dump(example_dict))
+        # First, let's take the imported dictionary and populate it full of stuff
+        populated_dict = {}
+        populated_dict['kind'] = args.generate
+        for i in example_dict:
+            if i == 'kind':
+                pass
+            elif example_dict[i]['type'] == 'string':
+                populated_dict[i] = ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
+        # Then, we validate it by parsing the YAML and validating the dict
+        # Validate YAML Structure (body)
+        try:
+            with open("kinds/" + populated_dict['kind'] + ".json", 'r') as json_file:
+                validation_dict = json.loads(json_file.read())
+        except Exception as e:
+            sys.exit("E1300: Kind processing issue: " + str(e))
+        else:
+            schema_validator = Validator(validation_dict, require_all=True)
+            if not (schema_validator.validate(populated_dict)):
+                # Provide intuitive errors on why it failed validation, pretty printed
+                sys.exit("E1400: Validation Errors found:\n" + json.dumps(schema_validator.errors, indent=4))
+
+        # Then, let's turn the output into a string
+        output_output = yaml.dump(populated_dict)
+        json.dumps(populated_dict)
+        print(output_output)
+
         # Optionally Write all that to a file
         if(args.output):
             try:
                 filehandle = open(args.output, "w")
-                filehandle.write(yaml.dump(example_dict))
+                filehandle.write(output_output)
                 filehandle.close()
             except Exception as e:
                 sys.exit("Error writing to file! " + str(e))
